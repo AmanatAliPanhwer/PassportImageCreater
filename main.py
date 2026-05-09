@@ -5,6 +5,8 @@ import numpy as np
 import onnxruntime as ort
 from PIL import Image
 import streamlit as st
+import zipfile
+import io
 
 # Initialize Mediapipe Face Detection
 mp_face = mp.solutions.face_detection
@@ -85,6 +87,18 @@ def process_image(image):
     return bg_resized
 
 
+def create_output_zip():
+    """Create a ZIP file of all files in the output folder"""
+    zip_buffer = io.BytesIO()
+    with zipfile.ZipFile(zip_buffer, 'w', zipfile.ZIP_DEFLATED) as zip_file:
+        for filename in os.listdir("output"):
+            file_path = os.path.join("output", filename)
+            if os.path.isfile(file_path):
+                zip_file.write(file_path, arcname=filename)
+    zip_buffer.seek(0)
+    return zip_buffer
+
+
 def main():
     if 'button_state' not in st.session_state:
         st.session_state.button_state = True
@@ -114,6 +128,15 @@ def main():
                     processed_image.save("output/" + image.name)
         
                 st.success("Images prossesed successful and saved in **output** folder")
+                
+                # Add download button for output folder
+                zip_buffer = create_output_zip()
+                st.download_button(
+                    label="📥 Download all images as ZIP",
+                    data=zip_buffer,
+                    file_name="passport_images.zip",
+                    mime="application/zip"
+                )
 
 if __name__ == '__main__':
     os.makedirs("output", exist_ok=True)
