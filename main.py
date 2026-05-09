@@ -116,4 +116,5 @@ def main():
                 st.success("Images prossesed successful and saved in **output** folder")
 
 if __name__ == '__main__':
+    os.makedirs("output", exist_ok=True)
     main()
