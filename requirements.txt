@@ -1,6 +1,6 @@
 mediapipe>=0.10.21
 numpy
 onnxruntime==1.18.1
-opencv-python
+opencv-python-headless
 pillow
 streamlit>=1.49.1
